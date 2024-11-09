@@ -56,7 +56,7 @@
         </exports>
         <imports></imports>
       </dependency>
-      <dependency>
+      <!--<dependency>
         <label>lxgui</label>
         <subpath>build</subpath>
         <remote>
@@ -97,8 +97,10 @@
             <value><install></install>/lib</value>
           </export>
         </exports>
-        <imports></imports>
-      </dependency>
+        <imports>
+          <import>sfml</import>
+        </imports>
+      </dependency>-->
     </dependencies>
     <targets>
       <target type="executable">
@@ -107,7 +109,7 @@
         <links></links>
         <imports>
           <import>sfml</import>
-          <import>lxgui</import>
+          <!--<import>lxgui</import>-->
         </imports>
         <post>
           <shells>

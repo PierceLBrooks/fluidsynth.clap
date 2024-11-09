@@ -3,6 +3,8 @@
 #include <clap/helpers/plugin.hxx>
 #include <clap/helpers/host-proxy.hxx>
 
+#include <SFML/Window/Event.hpp>
+
 #include <iostream>
 
 static char const *s_features[] = 
@@ -123,7 +125,7 @@ FluidsynthPlugin::activate(double sampleRate, uint32_t minFrameCount,
         std::cerr << "fluid activate " << sampleRate << " " 
             << minFrameCount << "-" << maxFrameCount << "\n";
     }
-    if (m_window == nullptr)
+    if(!m_window)
     {
         m_window = new sf::RenderWindow();
         m_window->create(sf::VideoMode(1280, 720), "fluidsynth.clap");
@@ -138,7 +140,7 @@ FluidsynthPlugin::deactivate() noexcept
     {
         std::cerr << "fluid deactivate\n";
     }
-    if (m_window != nullptr)
+    if(m_window)
     {
         delete m_window;
         m_window = nullptr;
@@ -202,6 +204,39 @@ FluidsynthPlugin::process(const clap_process *process) noexcept
 
         i += sframes;
     }
+    #if 0
+    if(m_window && m_window->isOpen())
+    {
+        sf::Event event;
+        while(m_window->pollEvent(event))
+        {
+            switch(event.type)
+            {
+            case sf::Event::Closed:
+                m_window->close();
+                break;
+            }
+            if(!m_window->isOpen())
+            {
+                break;
+            }
+        }
+        if(m_window->isOpen())
+        {
+            m_window->clear(sf::Color::Black);
+            m_window->display();
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                m_window->close();
+            }
+        }
+        /*else
+        {
+            delete m_window;
+            m_window = nullptr;
+        }*/
+    }
+    #endif
     return CLAP_PROCESS_CONTINUE;
 }
 
