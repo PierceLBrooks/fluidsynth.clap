@@ -10,4 +10,8 @@ _released/
 */_released/
 .ignore/
 .DS_Store
-BUILD.json
+/BUILD.json
+/build
+/install
+/Distribution
+

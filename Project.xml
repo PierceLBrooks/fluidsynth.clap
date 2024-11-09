@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildster directory="build" distribution="../Distribution">
+  <project directory="../Project">
+    <dependencies>
+      <dependency>
+        <label>sfml</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/PierceLBrooks/SFML.git</url>
+          <git_repo>
+            <branch>2.6.1</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments>
+            <argument>-DSFML_BUILD_AUDIO=OFF</argument>
+            <argument>-DSFML_BUILD_NETWORK=OFF</argument>
+          </arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>SFML_ROOT</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>SFML_INCLUDE_PATH</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>SFML_LIBRARIES_PATH</key>
+            <value>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows"><install></install>/bin</case>
+                <case check="Linux"><install></install>/lib</case>
+                <case check="Darwin"><install></install>/lib</case>
+                <default><quit></quit></default>
+              </switch>
+            </value>
+          </export>
+        </exports>
+        <imports></imports>
+      </dependency>
+      <dependency>
+        <label>lxgui</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/PierceLBrooks/lxgui.git</url>
+          <git_repo>
+            <branch>main</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments>
+            <argument>-DSFML_BUILD_AUDIO=OFF</argument>
+            <argument>-DSFML_BUILD_NETWORK=OFF</argument>
+          </arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>LXGUI_ROOT</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>LXGUI_INCLUDE_PATH</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>LXGUI_LIBRARIES_PATH</key>
+            <value><install></install>/lib</value>
+          </export>
+        </exports>
+        <imports></imports>
+      </dependency>
+    </dependencies>
+    <targets>
+      <target type="executable">
+        <label>fluidsynthclap</label>
+        <post>
+          <build>
+            <shells>
+              <shell>
+                <work><distribution></distribution>/..</work>
+                <commands>
+                  <command>
+                    <set>
+                      <key>PATH</key>
+                      <value><distribution></distribution>/../jsmk:<data id="PATH"></data></value>
+                    </set>
+                  </command>
+                  <command>jsmk</command>
+                </commands>
+              </shell>
+            </shells>
+          </build>
+        </post>
+        <definitions></definitions>
+        <links></links>
+        <imports>
+          <import>sfml</import>
+          <import>lxgui</import>
+        </imports>
+      </target>
+    </targets>
+  </project>
+</buildster>
