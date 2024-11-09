@@ -2,6 +2,7 @@
 
 #include <fluidsynth.h>
 
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <clap/helpers/plugin.hh>
 #include <clap/helpers/misbehaviour-handler.hh>
 #include <clap/helpers/checking-level.hh>
@@ -92,6 +93,7 @@ private:
     void setParamValue(int paramid, double value);
 
 private:
+    sf::RenderWindow *m_window;
     fluid_settings_t *m_settings;
     fluid_synth_t *m_synth;
     int m_fontId;

@@ -31,6 +31,7 @@ FluidsynthPlugin::FluidsynthPlugin(
         Plugin(&s_descriptor, host),
         m_settings(nullptr),
         m_synth(nullptr),
+        m_window(nullptr),
         m_pluginPath(pluginPath)
 {
     #ifdef _WIN32
@@ -122,6 +123,11 @@ FluidsynthPlugin::activate(double sampleRate, uint32_t minFrameCount,
         std::cerr << "fluid activate " << sampleRate << " " 
             << minFrameCount << "-" << maxFrameCount << "\n";
     }
+    if (m_window == nullptr)
+    {
+        m_window = new sf::RenderWindow();
+        m_window->create(sf::VideoMode(1280, 720), "fluidsynth.clap");
+    }
     return true;
 }
 
@@ -129,7 +135,14 @@ void
 FluidsynthPlugin::deactivate() noexcept 
 {
     if(m_verbosity > 0)
+    {
         std::cerr << "fluid deactivate\n";
+    }
+    if (m_window != nullptr)
+    {
+        delete m_window;
+        m_window = nullptr;
+    }
 }
 
 bool 

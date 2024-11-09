@@ -78,7 +78,7 @@ let fluidLibs =
 {
     win32: [`${fpkg}/lib/libfluidsynth.dll.a`],
     linux: [`${fpkg}/lib/libfluidsynth.so.3`],
-    darwin: [],
+    darwin: [`Distribution/${deployment}/libsfml-graphics-s.a`, `Distribution/${deployment}/libsfml-window-s.a`, `Distribution/${deployment}/libsfml-system-s.a`],
 }[platform];
 
 let fluidModules =
@@ -109,6 +109,7 @@ let t1 = m.NewTask("compile", "cpp->o",
         "src",
         `clap/include`,
         `clap-helpers/include`,
+        `Project/install/dependencies/sfml/${deployment}/include`,
         ...fluidSearchpaths,
     ],
     Deployment: deployment,
@@ -118,7 +119,7 @@ let t1 = m.NewTask("compile", "cpp->o",
 // NB: name of task is depended upon during install+renaming.
 // NB2: the name of the install dir is governed by package.json (see top)
 let linkflags = {
-    darwin: [],
+    darwin: ["-ObjC"],
     win32: [],
     linux: ["-Wl,-rpath=$ORIGIN"]
 }[platform];
