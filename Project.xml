@@ -17,6 +17,7 @@
         </remote>
         <build>
           <arguments>
+            <argument>-DBUILD_SHARED_LIBS=OFF</argument>
             <argument>-DSFML_BUILD_AUDIO=OFF</argument>
             <argument>-DSFML_BUILD_NETWORK=OFF</argument>
           </arguments>
@@ -69,10 +70,7 @@
           </git_repo>
         </remote>
         <build>
-          <arguments>
-            <argument>-DSFML_BUILD_AUDIO=OFF</argument>
-            <argument>-DSFML_BUILD_NETWORK=OFF</argument>
-          </arguments>
+          <arguments></arguments>
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
@@ -105,30 +103,50 @@
     <targets>
       <target type="executable">
         <label>fluidsynthclap</label>
-        <post>
-          <build>
-            <shells>
-              <shell>
-                <work><distribution></distribution>/..</work>
-                <commands>
-                  <command>
-                    <set>
-                      <key>PATH</key>
-                      <value><distribution></distribution>/../jsmk:<data id="PATH"></data></value>
-                    </set>
-                  </command>
-                  <command>jsmk</command>
-                </commands>
-              </shell>
-            </shells>
-          </build>
-        </post>
         <definitions></definitions>
         <links></links>
         <imports>
           <import>sfml</import>
           <import>lxgui</import>
         </imports>
+        <post>
+          <shells>
+            <shell>
+              <work><distribution></distribution>/../../jsmk</work>
+              <commands>
+                <command>npm install</command>
+              </commands>
+            </shell>
+            <shell>
+              <work><distribution></distribution>/../..</work>
+              <commands>
+                <command>
+                  <set>
+                    <key>PATH</key>
+                    <value>
+                      <switch id="BUILDSTER_OS">
+                        <case check="Windows"><distribution></distribution>/../../jsmk;<data id="PATH"></data></case>
+                        <default><distribution></distribution>/../../jsmk:<data id="PATH"></data></default>
+                      </switch>
+                    </value>
+                  </set>
+                </command>
+                <command>
+                  <write>
+                    <destination><distribution></distribution>/../../Project.json</destination>
+                    <content>{"variant":"<lower><data id="BUILDSTER_VARIANT"></data></lower>"}</content>
+                  </write>
+                </command>
+                <command>
+                  <switch id="BUILDSTER_VARIANT">
+                    <case check="Debug">jsmk</case>
+                    <default>jsmk -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
+                  </switch>
+                </command>
+              </commands>
+            </shell>
+          </shells>
+        </post>
       </target>
     </targets>
   </project>

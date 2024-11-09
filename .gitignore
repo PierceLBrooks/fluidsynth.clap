@@ -11,6 +11,7 @@ _released/
 .ignore/
 .DS_Store
 /BUILD.json
+/Project.json
 /build
 /install
 /Distribution

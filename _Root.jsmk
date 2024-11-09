@@ -21,7 +21,17 @@
  *          _CodeSignature/
  *             CodeResources   (xml/plist)
  */
-let pkgj = jsmk.file.read(jsmk.path.join(Project.ProjectDir, "package.json"));
+let deployment = "debug"
+let buildsterp = jsmk.path.join(Project.ProjectDir, "Project.json");
+if(jsmk.file.exists(buildsterp))
+{
+    let buildsterj = jsmk.file.read(buildsterp);
+    let buildster = JSON.parse(buildsterj);
+    deployment = buildster.variant;
+}
+console.log("Deployment = \""+deployment+"\"");
+let pkgp = jsmk.path.join(Project.ProjectDir, "package.json");
+let pkgj = jsmk.file.read(pkgp);
 let pkg = JSON.parse(pkgj);
 let appName = pkg.label;
 let appVers = pkg.version;
@@ -34,6 +44,7 @@ Project.EstablishDomain(appName, /(vs|gcc|clang)/,
     Track: "beta",
     TimestampFile: "BUILD.json",
     CppStd: "c++17", // clap prefers modern c++
+    Deployment: deployment,
 });
 
 Project.Define({
@@ -100,6 +111,7 @@ let t1 = m.NewTask("compile", "cpp->o",
         `clap-helpers/include`,
         ...fluidSearchpaths,
     ],
+    Deployment: deployment,
 });
 
 // jsmk.WARNING(`fluidModules: ${fluidModules} ${platform}`);
@@ -116,6 +128,7 @@ let t2 = m.NewTask("FluidSynth", "cpp.o->so", {
     deps: fluidLibs,
     modules: fluidModules,
     flags: linkflags,
+    Deployment: deployment,
 });
 
 switch(platform)
@@ -128,23 +141,27 @@ case "win32":
         m.NewTask("installPlug", "install", {
             inputs: t2.GetOutputs(), 
             installext: ".clap", // <--------- need separate rule for other files
-            installdir: "/"
+            installdir: "/",
+            Deployment: deployment,
         });
         /* windows dlls can be downloaded from fluidsynth github */
         m.NewTask("installDLLs", "install", {
                     inputs: Project.Glob(`${fpkg}/${dsoGlob}`),
-                    installdir: "/"
+                    installdir: "/",
+                    Deployment: deployment,
                 });
         /* install the _built to _install, copying on the way --- */
         m.NewTask("installLegal", "install", {
             inputs: ["README.md", "LICENSE", "BUILD.json", "licenses"],
             installdir: "etc",
+            Deployment: deployment,
         });
         /* finally, we zip ------------------------------- */
         let zipfile = `${appName}.${ts}.zip`;
         m.NewTask("fluidsynthPackage", "packagescript", {
             ARGUMENTS: ["build/zipdir.js", installRoot,
-                jsmk.path.join(installRoot, "..", zipfile)]
+                jsmk.path.join(installRoot, "..", zipfile)],
+            Deployment: deployment,
         });
     }
     break;
@@ -158,22 +175,26 @@ case "darwin":
             inputs: t2.GetOutputs(), 
             installext: "", // <--------- need separate rule for other files
             installdir: binDir,
+            Deployment: deployment,
         });
         /* no frameworks atm, statically linked 
         m.NewTask("packageDLLs", "installscript", {
             ARGUMENTS: ["build/fixupDLLs.js",
                  jsmk.path.join(installRoot, frameworksDir), 
                  ...tcpy.GetOutputs()
-                ]
+                ],
+            Deployment: deployment,
             })
         */
         m.NewTask("installPkg", "install", {
             inputs: ["build/darwin/Info.plist", "build/darwin/PkgInfo"],
-            installdir: "Contents"
+            installdir: "Contents",
+            Deployment: deployment,
         });
         m.NewTask("installLegal", "install", {
             inputs: ["README.md", "LICENSE", "BUILD.json", "licenses", "build/darwin/clap.icns"],
             installdir: resourcesDir,
+            Deployment: deployment,
         });
         // https://developer.apple.com/forums/thread/130855
         //  -- only sign binaries
@@ -182,7 +203,8 @@ case "darwin":
         {
             ARGUMENTS: [
                 "build/darwin/osxsign.js", installRoot,
-            ]
+            ],
+            Deployment: deployment,
         });
 
         let ts = jsmk.GetActiveToolset().GetHandle();
@@ -192,14 +214,16 @@ case "darwin":
             ARGUMENTS: [
                 "build/darwin/osxpackage.js", "FluidSynth.clap", installRoot, "build/darwin/Help.rtf", 
                 installRoot+dmgExt
-            ]
+            ],
+            Deployment: deployment,
         });
         
         m.NewTask("osxnotarize", "repositscript",
         {
             ARGUMENTS: [
                 "build/darwin/osxnotarize.js", installRoot+dmgExt
-            ]
+            ],
+            Deployment: deployment,
         });
     }
     break;
