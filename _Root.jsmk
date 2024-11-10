@@ -73,10 +73,14 @@ let fpkg = {
     darwin: "/opt/homebrew",
     // win32: "_prebuilt/fluidsynth-dev-win10-x64"
 }[platform];
-let fluidSearchpaths = [`${fpkg}/include`];
+let fluidSearchpaths = {
+    win32: [`${fpkg}/include`],
+    linux: [`${fpkg}/include`],
+    darwin: [`${fpkg}/include`],
+}[platform];
 let fluidLibs = 
 {
-    win32: [`${fpkg}/lib/libfluidsynth.dll.a`],
+    win32: [`${fpkg}/lib/libfluidsynth.dll.a`, `Distribution/${deployment}/sfml-graphics-s.lib`, `Distribution/${deployment}/sfml-window-s.lib`, `Distribution/${deployment}/sfml-system-s.lib`, `Distribution/${deployment}/freetype.lib`, "winmm.lib", "user32.lib", "gdi32.lib", "advapi32.lib", "opengl32.lib"],
     linux: [`${fpkg}/lib/libfluidsynth.so.3`],
     darwin: [`Distribution/${deployment}/libsfml-graphics-s.a`, `Distribution/${deployment}/libsfml-window-s.a`, `Distribution/${deployment}/libsfml-system-s.a`],
 }[platform];
@@ -118,10 +122,11 @@ let t1 = m.NewTask("compile", "cpp->o",
 // jsmk.WARNING(`fluidModules: ${fluidModules} ${platform}`);
 // NB: name of task is depended upon during install+renaming.
 // NB2: the name of the install dir is governed by package.json (see top)
+let linkts = jsmk.GetActiveToolset().EnvMap["LIB"]
 let linkflags = {
     darwin: ["-ObjC"],
-    win32: [],
-    linux: ["-Wl,-rpath=$ORIGIN"]
+    win32: [`/LIBPATH:${linkts}`],
+    linux: ["-Wl,-rpath=$ORIGIN"],
 }[platform];
 
 let t2 = m.NewTask("FluidSynth", "cpp.o->so", {

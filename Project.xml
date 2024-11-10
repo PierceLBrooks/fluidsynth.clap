@@ -2,6 +2,55 @@
 <buildster directory="build" distribution="../Distribution">
   <project directory="../Project">
     <dependencies>
+	  <if_check id="BUILDSTER_OS" check="Windows">
+		<dependency>
+          <label>fluidsynth</label>
+          <subpath>build</subpath>
+          <remote>
+            <url>https://github.com/FluidSynth/fluidsynth/releases/download/v2.3.3/fluidsynth-2.3.3-win10-x64.zip</url>
+            <wget>fluidsynth-2.3.3-win10-x64.zip</wget>
+          </remote>
+          <build>
+            <arguments></arguments>
+            <shells>
+              <shell>
+                <work><origin></origin></work>
+                <commands>
+				  <command>
+				    <if_exists>
+					  <exists><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64.zip</exists>
+					  echo "fluidsynth"
+					  <else>
+						<copy>
+						  <from><origin></origin>/fluidsynth-2.3.3-win10-x64.zip</from>
+						  <to><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64.zip</to>
+						</copy>
+					  </else>
+					</if_exists>
+				  </command>
+                </commands>
+              </shell>
+              <shell>
+                <work><distribution></distribution>/../../_prebuilt</work>
+                <commands>
+                  <command><extract><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64.zip</extract></command>
+                </commands>
+              </shell>
+            </shells>
+          </build>
+          <exports>
+            <export type="headers">
+              <key>FLUIDSYNTH_INCLUDE_PATH</key>
+              <value><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64/include</value>
+            </export>
+            <export type="libraries">
+              <key>FLUIDSYNTH_LIBRARIES_PATH</key>
+              <value><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64/lib</value>
+            </export>
+          </exports>
+          <imports></imports>
+        </dependency>
+	  </if_check>
       <dependency>
         <label>sfml</label>
         <subpath>build</subpath>
@@ -24,7 +73,7 @@
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
-                <case check="Windows">MinGW Makefiles</case>
+                <case check="Windows">Visual Studio 17 2022</case>
                 <case check="Linux">Unix Makefiles</case>
                 <case check="Darwin">Xcode</case>
                 <default><quit></quit></default>
@@ -74,7 +123,7 @@
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
-                <case check="Windows">MinGW Makefiles</case>
+                <case check="Windows">Visual Studio 17 2022</case>
                 <case check="Linux">Unix Makefiles</case>
                 <case check="Darwin">Xcode</case>
                 <default><quit></quit></default>
@@ -105,6 +154,14 @@
     <targets>
       <target type="executable">
         <label>fluidsynthclap</label>
+		<generator>
+		  <switch id="BUILDSTER_OS">
+			<case check="Windows">Visual Studio 17 2022</case>
+			<case check="Linux">Unix Makefiles</case>
+			<case check="Darwin">Xcode</case>
+			<default><quit></quit></default>
+		  </switch>
+		</generator>
         <definitions></definitions>
         <links></links>
         <imports>
@@ -140,10 +197,20 @@
                   </write>
                 </command>
                 <command>
-                  <switch id="BUILDSTER_VARIANT">
-                    <case check="Debug">jsmk</case>
-                    <default>jsmk -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
-                  </switch>
+				  <switch id="BUILDSTER_OS">
+					<case check="Windows">
+					  <switch id="BUILDSTER_VARIANT">
+						<case check="Debug">node <distribution></distribution>/../../jsmk/main.js</case>
+						<default>node <distribution></distribution>/../../jsmk/main.js -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
+					  </switch>
+					</case>
+					<default>
+					  <switch id="BUILDSTER_VARIANT">
+						<case check="Debug">jsmk</case>
+						<default>jsmk -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
+					  </switch>
+					</default>
+				  </switch>
                 </command>
               </commands>
             </shell>
