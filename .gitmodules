@@ -10,3 +10,6 @@
 [submodule "Buildster"]
 	path = Buildster
 	url = https://github.com/PierceLBrooks/Buildster.git
+[submodule "jsmk"]
+	path = jsmk
+	url = https://github.com/PierceLBrooks/jsmk.git
