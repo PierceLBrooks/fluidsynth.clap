@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<buildster directory="build" distribution="../Distribution">
+<buildster directory="build" distribution="../Distribution" cpp="17">
   <project directory="../Project">
     <dependencies>
 	  <if_check id="BUILDSTER_OS" check="Windows">
@@ -46,6 +46,56 @@
             <export type="libraries">
               <key>FLUIDSYNTH_LIBRARIES_PATH</key>
               <value><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64/lib</value>
+            </export>
+            <!--<export type="libraries">
+              <key>FLUIDSYNTH_BINARIES_PATH</key>
+              <value><distribution></distribution>/../../_prebuilt/fluidsynth-2.3.3-win10-x64/bin</value>
+            </export>-->
+          </exports>
+          <imports></imports>
+        </dependency>
+		<dependency>
+          <label>clap</label>
+          <subpath>build</subpath>
+          <local><path><distribution></distribution>/../../clap</path></local>
+          <build>
+            <arguments></arguments>
+            <shells>
+              <shell>
+                <work><origin></origin></work>
+                <commands>
+				  <command>echo "clap"</command>
+                </commands>
+              </shell>
+            </shells>
+          </build>
+          <exports>
+            <export type="headers">
+              <key>CLAP_INCLUDE_PATH</key>
+              <value><distribution></distribution>/../../clap/include</value>
+            </export>
+          </exports>
+          <imports></imports>
+        </dependency>
+		<dependency>
+          <label>claphelp</label>
+          <subpath>build</subpath>
+          <local><path><distribution></distribution>/../../clap-helpers</path></local>
+          <build>
+            <arguments></arguments>
+            <shells>
+              <shell>
+                <work><origin></origin></work>
+                <commands>
+				  <command>echo "claphelp"</command>
+                </commands>
+              </shell>
+            </shells>
+          </build>
+          <exports>
+            <export type="headers">
+              <key>CLAPHELP_INCLUDE_PATH</key>
+              <value><distribution></distribution>/../../clap-helpers/include</value>
             </export>
           </exports>
           <imports></imports>
@@ -145,7 +195,7 @@
       </dependency>-->
     </dependencies>
     <targets>
-      <target type="executable">
+      <target type="library" linkage="shared">
         <label>fluidsynthclap</label>
 		<generator>
 		  <switch id="BUILDSTER_OS">
@@ -156,8 +206,24 @@
 		  </switch>
 		</generator>
         <definitions></definitions>
-        <links></links>
+		<arguments>
+		  <argument>-DCMAKE_EXPORT_COMPILE_COMMANDS=1</argument>
+		</arguments>
+        <links>
+          <if_check id="BUILDSTER_OS" check="Windows">
+            <link linkage="static" language="C">*fluidsynth.dll*</link>
+          </if_check>
+		  <link linkage="static" language="CXX">*sfml-graphics-s<if_check id="BUILDSTER_VARIANT" check="Debug">-d</if_check>*</link>
+		  <link linkage="static" language="CXX">*sfml-window-s<if_check id="BUILDSTER_VARIANT" check="Debug">-d</if_check>*</link>
+		  <link linkage="static" language="CXX">*sfml-system-s<if_check id="BUILDSTER_VARIANT" check="Debug">-d</if_check>*</link>
+		  <link>*freetype*</link>
+		</links>
         <imports>
+          <if_check id="BUILDSTER_OS" check="Windows">
+            <import>fluidsynth</import>
+            <import>clap</import>
+            <import>claphelp</import>
+          </if_check>
           <import>sfml</import>
           <!--<import>lxgui</import>-->
         </imports>

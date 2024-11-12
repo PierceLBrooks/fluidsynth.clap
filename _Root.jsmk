@@ -109,10 +109,10 @@ let defs = {
 
 let t1 = m.NewTask("compile", "cpp->o",
 {
-    inputs: Project.Glob("src/*.cpp"),
+    inputs: Project.Glob("Project/fluidsynthclap/*.cpp"),
     defs,
     searchpaths: [
-        "src",
+        "Project/fluidsynthclap",
         `clap/include`,
         `clap-helpers/include`,
         `Project/install/dependencies/sfml/${deployment}/include`,
