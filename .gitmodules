@@ -7,9 +7,6 @@
 [submodule "fluidsynth"]
 	path = fluidsynth
 	url = https://github.com/FluidSynth/fluidsynth
-[submodule "jsmk"]
-	path = jsmk
-	url = https://github.com/dbadb/jsmk.git
 [submodule "Buildster"]
 	path = Buildster
 	url = https://github.com/PierceLBrooks/Buildster.git

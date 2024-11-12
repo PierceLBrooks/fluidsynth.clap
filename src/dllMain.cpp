@@ -62,7 +62,7 @@ const void *clap_get_factory(const char *factory_id)
 }
 
 // This symbol will be resolved by the host
-CLAP_EXPORT const clap_plugin_entry clap_entry = 
+CLAP_EXPORT extern const clap_plugin_entry clap_entry = 
 {
     CLAP_VERSION,
     clap_init,

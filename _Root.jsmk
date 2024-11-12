@@ -22,12 +22,14 @@
  *             CodeResources   (xml/plist)
  */
 let deployment = "debug"
+let distribution = "Distribution"
 let buildsterp = jsmk.path.join(Project.ProjectDir, "Project.json");
 if(jsmk.file.exists(buildsterp))
 {
     let buildsterj = jsmk.file.read(buildsterp);
     let buildster = JSON.parse(buildsterj);
     deployment = buildster.variant;
+    distribution = buildster.distribution;
 }
 console.log("Deployment = \""+deployment+"\"");
 let pkgp = jsmk.path.join(Project.ProjectDir, "package.json");
@@ -36,7 +38,7 @@ let pkg = JSON.parse(pkgj);
 let appName = pkg.label;
 let appVers = pkg.version;
 
-Project.EstablishDomain(appName, /(vs|gcc|clang)/,
+Project.EstablishDomain(appName, /(mingw|gcc|clang)/,
 {
     AppName: appName,
     Package: appName, // version-less (version installed inside)
@@ -80,7 +82,7 @@ let fluidSearchpaths = {
 }[platform];
 let fluidLibs = 
 {
-    win32: [`${fpkg}/lib/libfluidsynth.dll.a`, `Distribution/${deployment}/sfml-graphics-s.lib`, `Distribution/${deployment}/sfml-window-s.lib`, `Distribution/${deployment}/sfml-system-s.lib`, `Distribution/${deployment}/freetype.lib`, "winmm.lib", "user32.lib", "gdi32.lib", "advapi32.lib", "opengl32.lib"],
+    win32: ["fluidsynth", "sfml-graphics-s", "sfml-window-s", "sfml-system-s", "freetype"],
     linux: [`${fpkg}/lib/libfluidsynth.so.3`],
     darwin: [`Distribution/${deployment}/libsfml-graphics-s.a`, `Distribution/${deployment}/libsfml-window-s.a`, `Distribution/${deployment}/libsfml-system-s.a`],
 }[platform];
@@ -122,10 +124,10 @@ let t1 = m.NewTask("compile", "cpp->o",
 // jsmk.WARNING(`fluidModules: ${fluidModules} ${platform}`);
 // NB: name of task is depended upon during install+renaming.
 // NB2: the name of the install dir is governed by package.json (see top)
-let linkts = jsmk.GetActiveToolset().EnvMap["LIB"]
+//let linkts = jsmk.GetActiveToolset().EnvMap["LIB"]
 let linkflags = {
     darwin: ["-ObjC"],
-    win32: [`/LIBPATH:${linkts}`],
+    win32: [`-L${distribution}`],
     linux: ["-Wl,-rpath=$ORIGIN"],
 }[platform];
 

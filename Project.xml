@@ -73,7 +73,7 @@
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
-                <case check="Windows">Visual Studio 17 2022</case>
+                <case check="Windows">MinGW Makefiles</case>
                 <case check="Linux">Unix Makefiles</case>
                 <case check="Darwin">Xcode</case>
                 <default><quit></quit></default>
@@ -123,7 +123,7 @@
           <cmake>
             <generator>
               <switch id="BUILDSTER_OS">
-                <case check="Windows">Visual Studio 17 2022</case>
+                <case check="Windows">MinGW Makefiles</case>
                 <case check="Linux">Unix Makefiles</case>
                 <case check="Darwin">Xcode</case>
                 <default><quit></quit></default>
@@ -156,7 +156,7 @@
         <label>fluidsynthclap</label>
 		<generator>
 		  <switch id="BUILDSTER_OS">
-			<case check="Windows">Visual Studio 17 2022</case>
+			<case check="Windows">MinGW Makefiles</case>
 			<case check="Linux">Unix Makefiles</case>
 			<case check="Darwin">Xcode</case>
 			<default><quit></quit></default>
@@ -193,21 +193,22 @@
                 <command>
                   <write>
                     <destination><distribution></distribution>/../../Project.json</destination>
-                    <content>{"variant":"<lower><data id="BUILDSTER_VARIANT"></data></lower>"}</content>
+                    <content>{"variant":"<lower><data id="BUILDSTER_VARIANT"></data></lower>","distribution":"<distribution></distribution>"}</content>
                   </write>
                 </command>
+                <command><delete><distribution></distribution>/libfluidsynth.a</delete></command>
                 <command>
 				  <switch id="BUILDSTER_OS">
 					<case check="Windows">
 					  <switch id="BUILDSTER_VARIANT">
-						<case check="Debug">node <distribution></distribution>/../../jsmk/main.js</case>
-						<default>node <distribution></distribution>/../../jsmk/main.js -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
+						<case check="Debug">node <distribution></distribution>/../../jsmk/main.js -l DEBUG</case>
+						<default>node <distribution></distribution>/../../jsmk/main.js -l DEBUG -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
 					  </switch>
 					</case>
 					<default>
 					  <switch id="BUILDSTER_VARIANT">
-						<case check="Debug">jsmk</case>
-						<default>jsmk -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
+						<case check="Debug">jsmk -l DEBUG</case>
+						<default>jsmk -l DEBUG -p <lower><data id="BUILDSTER_VARIANT"></data></lower></default>
 					  </switch>
 					</default>
 				  </switch>
