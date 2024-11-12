@@ -93,14 +93,7 @@
           </export>
           <export type="libraries">
             <key>SFML_LIBRARIES_PATH</key>
-            <value>
-              <switch id="BUILDSTER_OS">
-                <case check="Windows"><install></install>/bin</case>
-                <case check="Linux"><install></install>/lib</case>
-                <case check="Darwin"><install></install>/lib</case>
-                <default><quit></quit></default>
-              </switch>
-            </value>
+            <value><install></install>/lib</value>
           </export>
         </exports>
         <imports></imports>
